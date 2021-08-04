@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.TextInputEditText
+import kotlinx.android.synthetic.main.search_dialog_fragment.*
 import ru.gb.translatorgb.R
 import ru.gb.translatorgb.utils.getEmptyString
 

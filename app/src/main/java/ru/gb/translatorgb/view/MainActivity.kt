@@ -5,6 +5,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.android.synthetic.main.activity_main.*
 import ru.gb.translatorgb.R
 import ru.gb.translatorgb.model.data.AppState
 import ru.gb.translatorgb.model.data.DataModel
@@ -13,6 +14,7 @@ import ru.gb.translatorgb.view.adapter.MainAdapter
 
 class MainActivity : BaseActivity<AppState>() {
 
+    //private lateinit var binding: MainActivityBinding
     private var adapter: MainAdapter? = null // Адаптер для отображения списка
     // вариантов перевода
     // Обработка нажатия элемента списка

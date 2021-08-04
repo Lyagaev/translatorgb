@@ -1,5 +1,6 @@
 package ru.gb.translatorgb.view
 
+
 import io.reactivex.Observable
 import ru.gb.translatorgb.model.data.AppState
 import ru.gb.translatorgb.model.data.DataModel
@@ -11,7 +12,7 @@ class MainInteractor(
     // данных
     private val remoteRepository: Repository<List<DataModel>>,
     private val localRepository: Repository<List<DataModel>>
-) : Interactor<DataModel> {
+) : Interactor<AppState> {
     // Интерактор лишь запрашивает у репозитория данные, детали имплементации
     // интерактору неизвестны
     override fun getData(word: String, fromRemoteSource: Boolean): Observable<AppState> {
