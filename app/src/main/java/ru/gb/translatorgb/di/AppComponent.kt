@@ -22,16 +22,10 @@ interface AppComponent {
     // Application
     @Component.Builder
     interface Builder {
-        @BindsInstance
-        fun application(application: Application): Builder
-
-        @BindsInstance
-        fun endPoint(endpoint: String): Builder
-
         fun build(): AppComponent
     }
 
     // Наш кастомный Application
-    fun inject(englishVocabularyApp: TranslatorApp)
+   // fun inject(englishVocabularyApp: TranslatorApp)
     fun inject(activity: MainActivity)
 }

@@ -3,20 +3,21 @@ package ru.gb.translatorgb.view
 import androidx.lifecycle.LiveData
 import io.reactivex.observers.DisposableObserver
 import ru.gb.translatorgb.model.data.AppState
-import ru.gb.translatorgb.model.data.DataSourceLocal
-import ru.gb.translatorgb.model.data.DataSourceRemote
-import ru.gb.translatorgb.model.repository.RepositoryImplementation
 import ru.gb.translatorgb.viewModel.BaseViewModel
+import javax.inject.Inject
 
-class MainViewModel(
-    private val interactor: MainInteractor = MainInteractor(
-        RepositoryImplementation(DataSourceRemote()),
-        RepositoryImplementation(DataSourceLocal())
-    )
-) : BaseViewModel<AppState>() {
+// Инжектируем интерактор в конструктор
+class MainViewModel @Inject constructor(
+        private val interactor: MainInteractor
+    ):BaseViewModel<AppState>() {
 
 // В этой переменной хранится последнее состояние Activity
 private var appState: AppState? = null
+
+fun subscribe(): LiveData<AppState> {
+    return liveDataForViewToObserve
+}
+
 // Переопределяем метод из BaseViewModel
 override fun getData(word: String, isOnline: Boolean): LiveData<AppState> {
     compositeDisposable.add(

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.gb.translatorgb.R
+import ru.gb.translatorgb.application.TranslatorApp
 import ru.gb.translatorgb.model.data.AppState
 import ru.gb.translatorgb.model.data.DataModel
 import ru.gb.translatorgb.view.adapter.MainAdapter
@@ -20,17 +21,14 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
     // Внедряем фабрику для создания ViewModel
     @Inject
     internal lateinit var viewModelFactory: ViewModelProvider.Factory
-    override lateinit var model: MainViewModel
 
-
-    /*override val model: MainViewModel by lazy {
-        ViewModelProvider.NewInstanceFactory().create(MainViewModel::class.java)
-    }*/
+    override val model: MainViewModel by lazy {
+        ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
+    }
     // Паттерн Observer в действии. Именно с его помощью мы подписываемся на
     // изменения в LiveData
     private val observer = Observer<AppState> { renderData(it) }
-    private var adapter: MainAdapter? = null // Адаптер для отображения списка
-    // вариантов перевода
+    private var adapter: MainAdapter? = null // Адаптер для отображения списка вариантов перевода
     // Обработка нажатия элемента списка
     private val onListItemClickListener: MainAdapter.OnListItemClickListener =
         object : MainAdapter.OnListItemClickListener {
@@ -41,12 +39,11 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Сообщаем Dagger’у, что тут понадобятся зависимости
-        AndroidInjection.inject(this)
+        TranslatorApp.component.inject(this)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        model = viewModelFactory.create(MainViewModel::class.java)
         model.subscribe().observe(this@MainActivity, Observer<AppState> { renderData(it) })
 
         search_fab.setOnClickListener {
