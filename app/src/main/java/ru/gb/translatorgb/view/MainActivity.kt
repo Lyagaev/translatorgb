@@ -4,19 +4,31 @@ import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.gb.translatorgb.R
+import ru.gb.translatorgb.application.TranslatorApp
 import ru.gb.translatorgb.model.data.AppState
 import ru.gb.translatorgb.model.data.DataModel
-import ru.gb.translatorgb.presenter.Presenter
 import ru.gb.translatorgb.view.adapter.MainAdapter
+import javax.inject.Inject
 
-class MainActivity : BaseActivity<AppState>() {
+class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
-    //private lateinit var binding: MainActivityBinding
-    private var adapter: MainAdapter? = null // Адаптер для отображения списка
-    // вариантов перевода
+    // Внедряем фабрику для создания ViewModel
+    @Inject
+    internal lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    override val model: MainViewModel by lazy {
+        ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
+    }
+    // Паттерн Observer в действии. Именно с его помощью мы подписываемся на
+    // изменения в LiveData
+    private val observer = Observer<AppState> { renderData(it) }
+    private var adapter: MainAdapter? = null // Адаптер для отображения списка вариантов перевода
     // Обработка нажатия элемента списка
     private val onListItemClickListener: MainAdapter.OnListItemClickListener =
         object : MainAdapter.OnListItemClickListener {
@@ -24,40 +36,46 @@ class MainActivity : BaseActivity<AppState>() {
                 Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
             }
         }
-    // Создаём презентер и храним его в базовой Activity
-    override fun createPresenter(): Presenter<AppState, View> {
-        return MainPresenterImpl()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Сообщаем Dagger’у, что тут понадобятся зависимости
+        TranslatorApp.component.inject(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        model.subscribe().observe(this@MainActivity, Observer<AppState> { renderData(it) })
+
         search_fab.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
             searchDialogFragment.setOnSearchClickListener(object : SearchDialogFragment.OnSearchClickListener {
                 override fun onClick(searchWord: String) {
-                    presenter.getData(searchWord, true)
+                    // Обратите внимание на этот ключевой момент. У ViewModel
+                    // мы получаем LiveData через метод getData и подписываемся
+                    // на изменения, передавая туда observer
+                    model.getData(searchWord, true).observe(this@MainActivity, observer)
                 }
             })
             searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
         }
     }
+
     // Переопределяем базовый метод
     override fun renderData(appState: AppState) {
         // В зависимости от состояния модели данных (загрузка, отображение,
         // ошибка) отображаем соответствующий экран
         when (appState) {
             is AppState.Success -> {
-                val dataModel = appState.data
-                if (dataModel == null || dataModel.isEmpty()) {
+                val data = appState.data
+                if (data == null || data.isEmpty()) {
                     showErrorScreen(getString(R.string.empty_server_response_on_success))
                 } else {
                     showViewSuccess()
                     if (adapter == null) {
                         main_activity_recyclerview.layoutManager = LinearLayoutManager(applicationContext)
-                        main_activity_recyclerview.adapter = MainAdapter(onListItemClickListener, dataModel)
+                        main_activity_recyclerview.adapter = MainAdapter(onListItemClickListener, data)
                     } else {
-                        adapter!!.setData(dataModel)
+                        adapter!!.setData(data)
                     }
                 }
             }
@@ -84,7 +102,9 @@ class MainActivity : BaseActivity<AppState>() {
         showViewError()
         error_textview.text = error ?: getString(R.string.undefined_error)
         reload_button.setOnClickListener {
-            presenter.getData("hi", true)
+            // В случае ошибки мы повторно запрашиваем данные и подписываемся
+            // на изменения
+            model.getData("hi", true).observe(this, observer)
         }
     }
 
