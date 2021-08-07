@@ -2,16 +2,20 @@ package ru.gb.translatorgb.view
 
 
 import io.reactivex.Observable
+import ru.gb.translatorgb.di.NAME_LOCAL
+import ru.gb.translatorgb.di.NAME_REMOTE
 import ru.gb.translatorgb.model.data.AppState
 import ru.gb.translatorgb.model.data.DataModel
 import ru.gb.translatorgb.model.repository.Repository
-import ru.gb.translatorgb.presenter.Interactor
+import ru.gb.translatorgb.viewModel.Interactor
+import javax.inject.Inject
+import javax.inject.Named
 
-class MainInteractor(
+class MainInteractor  @Inject constructor(
     // Снабжаем интерактор репозиторием для получения локальных или внешних
     // данных
-    private val remoteRepository: Repository<List<DataModel>>,
-    private val localRepository: Repository<List<DataModel>>
+    @Named(NAME_REMOTE) private val remoteRepository: Repository<List<DataModel>>,
+    @Named(NAME_LOCAL) private val localRepository: Repository<List<DataModel>>
 ) : Interactor<AppState> {
     // Интерактор лишь запрашивает у репозитория данные, детали имплементации
     // интерактору неизвестны

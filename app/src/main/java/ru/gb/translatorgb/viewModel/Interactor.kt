@@ -1,4 +1,4 @@
-package ru.gb.translatorgb.presenter
+package ru.gb.translatorgb.viewModel
 
 import io.reactivex.Observable
 
