@@ -19,12 +19,15 @@ import javax.inject.Inject
 class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
     // Внедряем фабрику для создания ViewModel
-    @Inject
+   /* @Inject
     internal lateinit var viewModelFactory: ViewModelProvider.Factory
 
     override val model: MainViewModel by lazy {
         ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
-    }
+    }*/
+
+    override lateinit var model: MainViewModel
+
     // Паттерн Observer в действии. Именно с его помощью мы подписываемся на
     // изменения в LiveData
     private val observer = Observer<AppState> { renderData(it) }
@@ -39,12 +42,12 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Сообщаем Dagger’у, что тут понадобятся зависимости
-        TranslatorApp.component.inject(this)
+        //TranslatorApp.component.inject(this)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        model.subscribe().observe(this@MainActivity, Observer<AppState> { renderData(it) })
+        iniViewModel()
+        //model.subscribe().observe(this@MainActivity, Observer<AppState> { renderData(it) })
 
         search_fab.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
@@ -96,6 +99,15 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
                 showErrorScreen(appState.error.message)
             }
         }
+    }
+
+    private fun iniViewModel() {
+        check(main_activity_recyclerview.adapter == null) { "The ViewModel should be initialised first" }
+        // Теперь ViewModel инициализируется через функцию by viewModel()
+        // Это функция, предоставляемая Koin из коробки
+        val viewModel: MainViewModel by viewModel()
+        model = viewModel
+        model.subscribe().observe(this@MainActivity, Observer<AppState> { renderData(it) })
     }
 
     private fun showErrorScreen(error: String?) {
