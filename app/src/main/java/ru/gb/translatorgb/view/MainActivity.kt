@@ -7,24 +7,26 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
+import org.koin.android.viewmodel.ext.android.viewModel
 import ru.gb.translatorgb.R
 import ru.gb.translatorgb.application.TranslatorApp
 import ru.gb.translatorgb.model.data.AppState
 import ru.gb.translatorgb.model.data.DataModel
 import ru.gb.translatorgb.view.adapter.MainAdapter
-import javax.inject.Inject
 
 class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
     // Внедряем фабрику для создания ViewModel
-    @Inject
+   /* @Inject
     internal lateinit var viewModelFactory: ViewModelProvider.Factory
 
     override val model: MainViewModel by lazy {
         ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
-    }
+    }*/
+
+    override lateinit var model: MainViewModel
+
     // Паттерн Observer в действии. Именно с его помощью мы подписываемся на
     // изменения в LiveData
     private val observer = Observer<AppState> { renderData(it) }
@@ -39,12 +41,12 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Сообщаем Dagger’у, что тут понадобятся зависимости
-        TranslatorApp.component.inject(this)
+        //TranslatorApp.component.inject(this)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        model.subscribe().observe(this@MainActivity, Observer<AppState> { renderData(it) })
+        iniViewModel()
+        //model.subscribe().observe(this@MainActivity, Observer<AppState> { renderData(it) })
 
         search_fab.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
@@ -53,7 +55,7 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
                     // Обратите внимание на этот ключевой момент. У ViewModel
                     // мы получаем LiveData через метод getData и подписываемся
                     // на изменения, передавая туда observer
-                    model.getData(searchWord, true).observe(this@MainActivity, observer)
+                    model.getData(searchWord, true)
                 }
             })
             searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
@@ -98,13 +100,22 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
         }
     }
 
+    private fun iniViewModel() {
+        check(main_activity_recyclerview.adapter == null) { "The ViewModel should be initialised first" }
+        // Теперь ViewModel инициализируется через функцию by viewModel()
+        // Это функция, предоставляемая Koin из коробки
+        val viewModel: MainViewModel by viewModel()
+        model = viewModel
+        model.subscribe().observe(this@MainActivity, Observer<AppState> { renderData(it) })
+    }
+
     private fun showErrorScreen(error: String?) {
         showViewError()
         error_textview.text = error ?: getString(R.string.undefined_error)
         reload_button.setOnClickListener {
             // В случае ошибки мы повторно запрашиваем данные и подписываемся
             // на изменения
-            model.getData("hi", true).observe(this, observer)
+            model.getData("hi", true)
         }
     }
 

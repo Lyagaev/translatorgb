@@ -1,17 +1,16 @@
 package ru.gb.translatorgb.application
 
 import android.app.Application
-import ru.gb.translatorgb.di.AppComponent
-import ru.gb.translatorgb.di.DaggerAppComponent
+import org.koin.core.context.startKoin
+import ru.gb.translatorgb.di.application
+import ru.gb.translatorgb.di.mainScreen
 
 class TranslatorApp : Application() {
 
-    companion object{
-        lateinit var component: AppComponent
-    }
-
     override fun onCreate() {
         super.onCreate()
-        component = DaggerAppComponent.builder().build()
+        startKoin {
+            modules(listOf(application, mainScreen))
+        }
     }
 }
