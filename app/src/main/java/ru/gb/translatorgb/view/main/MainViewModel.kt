@@ -1,4 +1,4 @@
-package ru.gb.translatorgb.view
+package ru.gb.translatorgb.view.main
 
 import androidx.lifecycle.LiveData
 import ru.gb.translatorgb.model.data.AppState

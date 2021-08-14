@@ -1,4 +1,4 @@
-package ru.gb.translatorgb.view
+package ru.gb.translatorgb.view.main
 
 import android.os.Bundle
 import android.text.Editable
