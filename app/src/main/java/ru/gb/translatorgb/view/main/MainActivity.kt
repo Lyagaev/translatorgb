@@ -13,8 +13,9 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import ru.gb.translatorgb.R
 import ru.gb.translatorgb.model.data.AppState
 import ru.gb.translatorgb.model.data.DataModel
+import ru.gb.translatorgb.utils.convertMeaningsToString
 import ru.gb.translatorgb.view.base.BaseActivity
-import ru.gb.translatorgb.view.adapter.MainAdapter
+import ru.gb.translatorgb.view.descriptionscreen.DescriptionActivity
 import ru.gb.translatorgb.view.history.HistoryActivity
 
 class MainActivity : BaseActivity<AppState, MainInteractor>() {
@@ -29,15 +30,22 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
     override lateinit var model: MainViewModel
 
+    // Передаём в адаптер слушатель нажатия на список
     private val adapter: MainAdapter by lazy { MainAdapter(onListItemClickListener) } // Адаптер для отображения списка вариантов перевода
-    // Обработка нажатия элемента списка
+    // Слушатель получает от адаптера необходимые данные и запускает новый экран
     private val onListItemClickListener: MainAdapter.OnListItemClickListener =
         object : MainAdapter.OnListItemClickListener {
             override fun onItemClick(data: DataModel) {
-                Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
+                startActivity(
+                    DescriptionActivity.getIntent(
+                        this@MainActivity,
+                        data.text!!,
+                        convertMeaningsToString(data.meanings!!),
+                        data.meanings[0].imageUrl
+                    )
+                )
             }
         }
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
