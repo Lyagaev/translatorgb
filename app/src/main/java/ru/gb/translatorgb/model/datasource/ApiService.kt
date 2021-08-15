@@ -1,6 +1,5 @@
 package ru.gb.translatorgb.model.datasource
 
-import io.reactivex.Observable
 import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 import retrofit2.http.Query

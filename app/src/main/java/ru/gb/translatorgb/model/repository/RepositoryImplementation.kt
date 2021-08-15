@@ -1,6 +1,5 @@
 package ru.gb.translatorgb.model.repository
 
-import io.reactivex.Observable
 import ru.gb.translatorgb.model.data.DataModel
 import ru.gb.translatorgb.model.datasource.DataSource
 
