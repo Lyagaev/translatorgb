@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.history.HistoryActivity"
+            android:name="ru.gb.historyscreen.history.HistoryActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".view.descriptionscreen.DescriptionActivity"

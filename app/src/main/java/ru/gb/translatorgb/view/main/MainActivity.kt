@@ -6,19 +6,17 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.widget.Toast
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.viewmodel.ext.android.viewModel
 import ru.gb.translatorgb.R
 import ru.gb.translatorgb.model.data.AppState
 import ru.gb.translatorgb.model.data.DataModel
-import ru.gb.translatorgb.utils.convertMeaningsToString
-import ru.gb.translatorgb.view.base.BaseActivity
+import ru.gb.historyscreen.convertMeaningsToString
 import ru.gb.translatorgb.view.descriptionscreen.DescriptionActivity
-import ru.gb.translatorgb.view.history.HistoryActivity
+import ru.gb.historyscreen.history.HistoryActivity
 
-class MainActivity : BaseActivity<AppState, MainInteractor>() {
+class MainActivity : ru.gb.core.viewModel.base.BaseActivity<AppState, MainInteractor>() {
 
     // Внедряем фабрику для создания ViewModel
    /* @Inject
@@ -41,7 +39,7 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
                         this@MainActivity,
                         data.text!!,
                         convertMeaningsToString(data.meanings!!),
-                        data.meanings[0].imageUrl
+                        data.meanings!![0].imageUrl
                     )
                 )
             }

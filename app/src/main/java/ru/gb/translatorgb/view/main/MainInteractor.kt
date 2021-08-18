@@ -3,9 +3,9 @@ package ru.gb.translatorgb.view.main
 
 import ru.gb.translatorgb.model.data.AppState
 import ru.gb.translatorgb.model.data.DataModel
-import ru.gb.translatorgb.model.repository.Repository
-import ru.gb.translatorgb.model.repository.RepositoryLocal
-import ru.gb.translatorgb.viewModel.Interactor
+import ru.gb.repository.repository.Repository
+import ru.gb.repository.repository.RepositoryLocal
+import ru.gb.core.viewModel.Interactor
 
 class MainInteractor(
     private val repositoryRemote: Repository<List<DataModel>>,

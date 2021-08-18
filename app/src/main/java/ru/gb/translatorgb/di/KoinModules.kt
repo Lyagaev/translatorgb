@@ -2,18 +2,16 @@ package ru.gb.translatorgb.di
 
 
 import androidx.room.Room
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import ru.gb.translatorgb.model.data.DataModel
-import ru.gb.translatorgb.model.datasource.RetrofitImplementation
-import ru.gb.translatorgb.model.datasource.RoomDataBaseImplementation
-import ru.gb.translatorgb.model.repository.Repository
-import ru.gb.translatorgb.model.repository.RepositoryImplementation
-import ru.gb.translatorgb.model.repository.RepositoryImplementationLocal
-import ru.gb.translatorgb.model.repository.RepositoryLocal
-import ru.gb.translatorgb.room.HistoryDataBase
+import ru.gb.repository.datasource.RetrofitImplementation
+import ru.gb.repository.datasource.RoomDataBaseImplementation
+import ru.gb.repository.repository.Repository
+import ru.gb.repository.repository.RepositoryImplementation
+import ru.gb.repository.repository.RepositoryImplementationLocal
+import ru.gb.repository.repository.RepositoryLocal
 import ru.gb.translatorgb.view.history.HistoryInteractor
-import ru.gb.translatorgb.view.history.HistoryViewModel
+import ru.gb.historyscreen.history.HistoryViewModel
 import ru.gb.translatorgb.view.main.MainInteractor
 import ru.gb.translatorgb.view.main.MainViewModel
 
@@ -21,9 +19,9 @@ import ru.gb.translatorgb.view.main.MainViewModel
 // используемые во всём приложении, во второй - зависимости конкретного экрана
 val application = module {
     // single указывает, что БД должна быть в единственном экземпляре
-    single { Room.databaseBuilder(get(), HistoryDataBase::class.java, "HistoryDB").build() }
+    single { Room.databaseBuilder(get(), ru.gb.repository.room.HistoryDataBase::class.java, "HistoryDB").build() }
     // Получаем DAO
-    single { get<HistoryDataBase>().historyDao() }
+    single { get<ru.gb.repository.room.HistoryDataBase>().historyDao() }
     single<Repository<List<DataModel>>> { RepositoryImplementation(RetrofitImplementation()) }
     single<RepositoryLocal<List<DataModel>>> { RepositoryImplementationLocal(RoomDataBaseImplementation(get()))
     }

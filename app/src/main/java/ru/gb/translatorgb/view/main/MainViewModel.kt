@@ -2,11 +2,11 @@ package ru.gb.translatorgb.view.main
 
 import androidx.lifecycle.LiveData
 import ru.gb.translatorgb.model.data.AppState
-import ru.gb.translatorgb.viewModel.BaseViewModel
+import ru.gb.core.viewModel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ru.gb.translatorgb.utils.parseSearchResults
+import ru.gb.historyscreen.parseSearchResults
 
 class MainViewModel(private val interactor: MainInteractor) :
     BaseViewModel<AppState>() {
