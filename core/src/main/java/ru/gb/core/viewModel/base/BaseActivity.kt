@@ -1,9 +1,12 @@
 package ru.gb.core.viewModel.base
 
+import android.os.Bundle
+import android.os.PersistableBundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.loading_layout.*
 import ru.gb.core.R
+import ru.gb.core.databinding.LoadingLayoutBinding
 import ru.gb.translatorgb.model.data.AppState
 import ru.gb.translatorgb.model.data.DataModel
 import ru.gb.translatorgb.utils.ui.AlertDialogFragment
@@ -11,9 +14,11 @@ import ru.gb.core.viewModel.Interactor
 import ru.gb.core.viewModel.BaseViewModel
 
 private const val DIALOG_FRAGMENT_TAG = "74a54328-5d62-46bf-ab6b-cbf5d8c79522"
+private lateinit var binding: LoadingLayoutBinding
 
 abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity() {
     abstract val model: BaseViewModel<T>
+
 
     //abstract fun renderData(dataModel: T)
 
@@ -39,12 +44,12 @@ abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity
             is AppState.Loading -> {
                 showViewLoading()
                 if (appState.progress != null) {
-                    progress_bar_horizontal.visibility = View.VISIBLE
-                    progress_bar_round.visibility = View.GONE
-                    progress_bar_horizontal.progress = appState.progress!!
+                    binding.progressBarHorizontal.visibility = View.VISIBLE
+                    binding.progressBarRound.visibility = View.GONE
+                    binding.progressBarHorizontal.progress = appState.progress!!
                 } else {
-                    progress_bar_horizontal.visibility = View.GONE
-                    progress_bar_round.visibility = View.VISIBLE
+                    binding.progressBarHorizontal.visibility = View.GONE
+                    binding.progressBarRound.visibility = View.VISIBLE
                 }
             }
             is AppState.Error -> {
@@ -66,11 +71,12 @@ abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity
     }
 
     private fun showViewWorking() {
-        loading_frame_layout.visibility = View.GONE
+        binding.loadingFrameLayout.visibility = View.GONE
     }
 
     private fun showViewLoading() {
-        loading_frame_layout.visibility = View.VISIBLE
+        binding = LoadingLayoutBinding.inflate(layoutInflater)
+        binding.loadingFrameLayout.visibility = View.VISIBLE
     }
 
     private fun isDialogNull(): Boolean {

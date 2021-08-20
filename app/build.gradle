@@ -34,16 +34,19 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    dynamicFeatures = [Modules.historyScreen]
 }
 
 dependencies {
+
+    //Google Play libraries
+    implementation GooglePlay.googlePlayCore
 
     //Modules
     implementation project(Modules.core)
     implementation project(Modules.model)
     implementation project(Modules.repository)
     implementation project(Modules.utils)
-    implementation project(Modules.historyScreen) //Feature
 
     //AndroidX
     implementation Design.appcompat
