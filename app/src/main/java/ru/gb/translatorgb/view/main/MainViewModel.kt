@@ -6,7 +6,7 @@ import ru.gb.core.viewModel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ru.gb.historyscreen.parseSearchResults
+import ru.gb.repository.parseSearchResults
 
 class MainViewModel(private val interactor: MainInteractor) :
     BaseViewModel<AppState>() {
