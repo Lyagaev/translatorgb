@@ -8,6 +8,8 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
@@ -28,6 +30,7 @@ import ru.gb.translatorgb.model.data.DataModel
 import ru.gb.translatorgb.view.descriptionscreen.DescriptionActivity
 import ru.gb.repository.convertMeaningsToString
 import ru.gb.translatorgb.di.injectDependencies
+import ru.gb.utils.ui.viewById
 
 private const val HISTORY_ACTIVITY_PATH = "ru.gb.historyscreen.history.HistoryActivity"
 private const val HISTORY_ACTIVITY_FEATURE_NAME = "historyscreen"
@@ -35,12 +38,13 @@ private const val REQUEST_CODE = 42
 
 class MainActivity : ru.gb.core.viewModel.base.BaseActivity<AppState, MainInteractor>() {
 
-
-
     override lateinit var model: MainViewModel
 
     private lateinit var splitInstallManager: SplitInstallManager
     private lateinit var appUpdateManager: AppUpdateManager
+
+    private val mainActivityRecyclerView by viewById<RecyclerView>(R.id.main_activity_recyclerview)
+    private val searchFAB by viewById<FloatingActionButton>(R.id.search_fab)
 
     // Передаём в адаптер слушатель нажатия на список
     private val adapter: MainAdapter by lazy { MainAdapter(onListItemClickListener) } // Адаптер для отображения списка вариантов перевода
@@ -116,7 +120,7 @@ class MainActivity : ru.gb.core.viewModel.base.BaseActivity<AppState, MainIntera
 
 
     private fun iniViewModel() {
-        if (main_activity_recyclerview.adapter != null) {
+        if (mainActivityRecyclerView.adapter != null) {
             throw IllegalStateException("The ViewModel should be initialised first")
         }
         injectDependencies()
@@ -166,7 +170,7 @@ class MainActivity : ru.gb.core.viewModel.base.BaseActivity<AppState, MainIntera
 
 
     private fun initViews() {
-        search_fab.setOnClickListener {
+        searchFAB.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
             searchDialogFragment.setOnSearchClickListener(object :
                 SearchDialogFragment.OnSearchClickListener {
@@ -179,7 +183,7 @@ class MainActivity : ru.gb.core.viewModel.base.BaseActivity<AppState, MainIntera
             })
             searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
         }
-        main_activity_recyclerview.adapter = adapter
+        mainActivityRecyclerView.adapter = adapter
     }
 
     private fun checkForUpdates() {
