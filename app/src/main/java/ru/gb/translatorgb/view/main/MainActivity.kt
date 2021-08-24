@@ -23,20 +23,21 @@ import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.android.play.core.splitinstall.SplitInstallRequest
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.scope.currentScope
-import org.koin.android.viewmodel.ext.android.viewModel
+import ru.gb.core.viewModel.base.BaseActivity
 import ru.gb.translatorgb.R
-import ru.gb.translatorgb.model.data.AppState
-import ru.gb.translatorgb.model.data.DataModel
+import ru.gb.model.data.AppState
+import ru.gb.model.data.dto.SearchResultDto
+import ru.gb.model.data.userdata.DataModel
 import ru.gb.translatorgb.view.descriptionscreen.DescriptionActivity
-import ru.gb.repository.convertMeaningsToString
 import ru.gb.translatorgb.di.injectDependencies
+import ru.gb.translatorgb.utils.convertMeaningsToSingleString
 import ru.gb.utils.ui.viewById
 
 private const val HISTORY_ACTIVITY_PATH = "ru.gb.historyscreen.history.HistoryActivity"
 private const val HISTORY_ACTIVITY_FEATURE_NAME = "historyscreen"
 private const val REQUEST_CODE = 42
 
-class MainActivity : ru.gb.core.viewModel.base.BaseActivity<AppState, MainInteractor>() {
+class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
     override lateinit var model: MainViewModel
 
@@ -56,7 +57,7 @@ class MainActivity : ru.gb.core.viewModel.base.BaseActivity<AppState, MainIntera
                     DescriptionActivity.getIntent(
                         this@MainActivity,
                         data.text!!,
-                        convertMeaningsToString(data.meanings!!),
+                        convertMeaningsToSingleString(data.meanings),
                         data.meanings!![0].imageUrl
                     )
                 )

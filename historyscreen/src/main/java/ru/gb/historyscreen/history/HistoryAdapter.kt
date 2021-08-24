@@ -7,7 +7,8 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_history_recyclerview_item.view.*
 import ru.gb.historyscreen.R
-import ru.gb.translatorgb.model.data.DataModel
+import ru.gb.model.data.dto.SearchResultDto
+import ru.gb.model.data.userdata.DataModel
 
 class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.RecyclerItemViewHolder>() {
 

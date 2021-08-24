@@ -6,7 +6,7 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import ru.gb.historyscreen.history.HistoryActivity
 import ru.gb.historyscreen.history.HistoryViewModel
-import ru.gb.translatorgb.view.history.HistoryInteractor
+import ru.gb.historyscreen.history.HistoryInteractor
 
 fun injectDependencies() = loadFeature
 

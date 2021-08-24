@@ -6,7 +6,7 @@ import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
-import ru.gb.translatorgb.model.data.DataModel
+import ru.gb.model.data.dto.SearchResultDto
 import ru.gb.repository.datasource.RetrofitImplementation
 import ru.gb.repository.datasource.RoomDataBaseImplementation
 import ru.gb.repository.repository.Repository
@@ -31,8 +31,8 @@ private val loadModules by lazy {
 val application = module {
     single { Room.databaseBuilder(get(), HistoryDataBase::class.java, "HistoryDB").build() }
     single { get<HistoryDataBase>().historyDao() }
-    single<Repository<List<DataModel>>> { RepositoryImplementation(RetrofitImplementation()) }
-    single<RepositoryLocal<List<DataModel>>> {
+    single<Repository<List<SearchResultDto>>> { RepositoryImplementation(RetrofitImplementation()) }
+    single<RepositoryLocal<List<SearchResultDto>>> {
         RepositoryImplementationLocal(RoomDataBaseImplementation(get()))
     }
 }
