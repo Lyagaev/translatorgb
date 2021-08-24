@@ -20,6 +20,7 @@ import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.android.play.core.splitinstall.SplitInstallRequest
 import kotlinx.android.synthetic.main.activity_main.*
+import org.koin.android.scope.currentScope
 import org.koin.android.viewmodel.ext.android.viewModel
 import ru.gb.translatorgb.R
 import ru.gb.translatorgb.model.data.AppState
@@ -34,15 +35,10 @@ private const val REQUEST_CODE = 42
 
 class MainActivity : ru.gb.core.viewModel.base.BaseActivity<AppState, MainInteractor>() {
 
-    // Внедряем фабрику для создания ViewModel
-   /* @Inject
-    internal lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    override val model: MainViewModel by lazy {
-        ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
-    }*/
 
     override lateinit var model: MainViewModel
+
     private lateinit var splitInstallManager: SplitInstallManager
     private lateinit var appUpdateManager: AppUpdateManager
 
@@ -124,9 +120,9 @@ class MainActivity : ru.gb.core.viewModel.base.BaseActivity<AppState, MainIntera
             throw IllegalStateException("The ViewModel should be initialised first")
         }
         injectDependencies()
-        // Теперь ViewModel инициализируется через функцию by viewModel()
-        // Это функция, предоставляемая Koin из коробки
-        val viewModel: MainViewModel by viewModel()
+
+        val viewModel: MainViewModel by currentScope.inject()
+
         model = viewModel
         model.subscribe().observe(this@MainActivity, Observer<AppState> { renderData(it) })
     }
