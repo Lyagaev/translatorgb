@@ -3,7 +3,7 @@ package ru.gb.core.viewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.*
-import ru.gb.translatorgb.model.data.AppState
+import ru.gb.model.data.AppState
 
 abstract class BaseViewModel<T : AppState>(
     // Обратите внимание, что мы добавили инстанс LiveData

@@ -8,6 +8,8 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
@@ -20,31 +22,30 @@ import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.android.play.core.splitinstall.SplitInstallRequest
 import kotlinx.android.synthetic.main.activity_main.*
-import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.android.scope.currentScope
+import ru.gb.core.viewModel.base.BaseActivity
 import ru.gb.translatorgb.R
-import ru.gb.translatorgb.model.data.AppState
-import ru.gb.translatorgb.model.data.DataModel
+import ru.gb.model.data.AppState
+import ru.gb.model.data.dto.SearchResultDto
+import ru.gb.model.data.userdata.DataModel
 import ru.gb.translatorgb.view.descriptionscreen.DescriptionActivity
-import ru.gb.repository.convertMeaningsToString
 import ru.gb.translatorgb.di.injectDependencies
+import ru.gb.translatorgb.utils.convertMeaningsToSingleString
+import ru.gb.utils.ui.viewById
 
 private const val HISTORY_ACTIVITY_PATH = "ru.gb.historyscreen.history.HistoryActivity"
 private const val HISTORY_ACTIVITY_FEATURE_NAME = "historyscreen"
 private const val REQUEST_CODE = 42
 
-class MainActivity : ru.gb.core.viewModel.base.BaseActivity<AppState, MainInteractor>() {
-
-    // Внедряем фабрику для создания ViewModel
-   /* @Inject
-    internal lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    override val model: MainViewModel by lazy {
-        ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
-    }*/
+class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
     override lateinit var model: MainViewModel
+
     private lateinit var splitInstallManager: SplitInstallManager
     private lateinit var appUpdateManager: AppUpdateManager
+
+    private val mainActivityRecyclerView by viewById<RecyclerView>(R.id.main_activity_recyclerview)
+    private val searchFAB by viewById<FloatingActionButton>(R.id.search_fab)
 
     // Передаём в адаптер слушатель нажатия на список
     private val adapter: MainAdapter by lazy { MainAdapter(onListItemClickListener) } // Адаптер для отображения списка вариантов перевода
@@ -56,7 +57,7 @@ class MainActivity : ru.gb.core.viewModel.base.BaseActivity<AppState, MainIntera
                     DescriptionActivity.getIntent(
                         this@MainActivity,
                         data.text!!,
-                        convertMeaningsToString(data.meanings!!),
+                        convertMeaningsToSingleString(data.meanings),
                         data.meanings!![0].imageUrl
                     )
                 )
@@ -120,13 +121,13 @@ class MainActivity : ru.gb.core.viewModel.base.BaseActivity<AppState, MainIntera
 
 
     private fun iniViewModel() {
-        if (main_activity_recyclerview.adapter != null) {
+        if (mainActivityRecyclerView.adapter != null) {
             throw IllegalStateException("The ViewModel should be initialised first")
         }
         injectDependencies()
-        // Теперь ViewModel инициализируется через функцию by viewModel()
-        // Это функция, предоставляемая Koin из коробки
-        val viewModel: MainViewModel by viewModel()
+
+        val viewModel: MainViewModel by currentScope.inject()
+
         model = viewModel
         model.subscribe().observe(this@MainActivity, Observer<AppState> { renderData(it) })
     }
@@ -170,7 +171,7 @@ class MainActivity : ru.gb.core.viewModel.base.BaseActivity<AppState, MainIntera
 
 
     private fun initViews() {
-        search_fab.setOnClickListener {
+        searchFAB.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
             searchDialogFragment.setOnSearchClickListener(object :
                 SearchDialogFragment.OnSearchClickListener {
@@ -183,7 +184,7 @@ class MainActivity : ru.gb.core.viewModel.base.BaseActivity<AppState, MainIntera
             })
             searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
         }
-        main_activity_recyclerview.adapter = adapter
+        mainActivityRecyclerView.adapter = adapter
     }
 
     private fun checkForUpdates() {

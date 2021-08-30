@@ -1,6 +1,6 @@
 package ru.gb.repository.repository
 
-import ru.gb.translatorgb.model.data.AppState
+import ru.gb.model.data.AppState
 
 interface RepositoryLocal<T> : Repository<T> {
 

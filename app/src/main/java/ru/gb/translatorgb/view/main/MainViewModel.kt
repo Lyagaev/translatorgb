@@ -1,12 +1,12 @@
 package ru.gb.translatorgb.view.main
 
 import androidx.lifecycle.LiveData
-import ru.gb.translatorgb.model.data.AppState
+import ru.gb.model.data.AppState
 import ru.gb.core.viewModel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ru.gb.repository.parseSearchResults
+import ru.gb.translatorgb.utils.parseOnlineSearchResults
 
 class MainViewModel(private val interactor: MainInteractor) :
     BaseViewModel<AppState>() {
@@ -32,7 +32,7 @@ class MainViewModel(private val interactor: MainInteractor) :
     // и так делает это благодаря CoroutineCallAdapterFactory(). Это же
     // касается и Room
     private suspend fun startInteractor(word: String, isOnline: Boolean) = withContext(Dispatchers.IO) {
-        _mutableLiveData.postValue(parseSearchResults(interactor.getData(word, isOnline)))
+        _mutableLiveData.postValue(parseOnlineSearchResults(interactor.getData(word, isOnline)))
     }
 
     override fun handleError(error: Throwable) {
@@ -40,7 +40,8 @@ class MainViewModel(private val interactor: MainInteractor) :
     }
 
     override fun onCleared() {
-        _mutableLiveData.value = AppState.Success(null)
+        _mutableLiveData.value =
+            AppState.Success(null)//TODO Workaround. Set View to original state
         super.onCleared()
     }
 }

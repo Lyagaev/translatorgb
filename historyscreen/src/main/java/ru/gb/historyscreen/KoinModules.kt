@@ -1,9 +1,12 @@
 package ru.gb.historyscreen
 
+import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import ru.gb.historyscreen.history.HistoryActivity
 import ru.gb.historyscreen.history.HistoryViewModel
-import ru.gb.translatorgb.view.history.HistoryInteractor
+import ru.gb.historyscreen.history.HistoryInteractor
 
 fun injectDependencies() = loadFeature
 
@@ -12,6 +15,8 @@ private val loadFeature by lazy {
 }
 
 val historyScreen = module {
-    factory { HistoryViewModel(get()) }
-    factory { HistoryInteractor(get(), get()) }
+    scope(named<HistoryActivity>()) {
+        scoped { HistoryInteractor(get(), get()) }
+        viewModel { HistoryViewModel(get()) }
+    }
 }

@@ -3,13 +3,12 @@ package ru.gb.historyscreen.history
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_history.*
-import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.android.scope.currentScope
 import ru.gb.core.viewModel.base.BaseActivity
 import ru.gb.historyscreen.R
 import ru.gb.historyscreen.injectDependencies
-import ru.gb.translatorgb.model.data.AppState
-import ru.gb.translatorgb.model.data.DataModel
-import ru.gb.translatorgb.view.history.HistoryInteractor
+import ru.gb.model.data.AppState
+import ru.gb.model.data.userdata.DataModel
 
 class HistoryActivity : BaseActivity<AppState, HistoryInteractor>() {
 
@@ -37,7 +36,7 @@ class HistoryActivity : BaseActivity<AppState, HistoryInteractor>() {
             throw IllegalStateException("The ViewModel should be initialised first")
         }
         injectDependencies()
-        val viewModel: HistoryViewModel by viewModel()
+        val viewModel: HistoryViewModel by currentScope.inject()
         model = viewModel
         model.subscribe().observe(this@HistoryActivity, Observer<AppState> { renderData(it) })
     }
